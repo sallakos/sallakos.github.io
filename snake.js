@@ -10,6 +10,10 @@ let ruokaY = 0;
 let suuntaMuuttumassa = false;
 let score = 0;
 let nopeus = 100;
+let shiftPaaX = 0;
+let shiftPaaY = 0;
+let paaX = 5;
+let paaY = 10;
 
 const gameCanvas = document.getElementById("gameCanvas");
 const ctx = gameCanvas.getContext("2d"); // Piirretään 2D -canvas.
@@ -39,12 +43,12 @@ $("#gameCanvas").click(main);
 // Pääohjelma. Liikutetaan matoa ajan nopeus välein.
 function main() {
 
-   // Jos snake osuu seinään tai itseensä, lopetetaan peli.
+  // Jos snake osuu seinään tai itseensä, lopetetaan peli.
   if (peliLoppu()) {
     return;
   }
 
-// Muutetaan suuntaa näppäimen painalluksesta. Toimii vasta, kun peli on aloitettu.
+  // Muutetaan suuntaa näppäimen painalluksesta. Toimii vasta, kun peli on aloitettu.
   document.addEventListener("keydown", muutaSuuntaa);
 
   // Päivitetään näkymää ajan nopeus välein.
@@ -77,11 +81,16 @@ function muodostaSnake() {
 }
 
 // Piirretään yksi osa. Väritetään 10x10 ruutu.
-function piirraSnakeOsa(snakeOsa) {
+function piirraSnakeOsa(snakeOsa, index) {
   ctx.fillStyle = SNAKE_VARI;
   ctx.strokestyle = CANVAS_VARI;
-  ctx.fillRect(snakeOsa.x, snakeOsa.y, 10, 10);
-  ctx.strokeRect(snakeOsa.x, snakeOsa.y, 10, 10);
+  if (index == 0) {
+    ctx.fillRect(snakeOsa.x + shiftPaaX, snakeOsa.y + shiftPaaY, paaX, paaY);
+    ctx.strokeRect(snakeOsa.x + shiftPaaX, snakeOsa.y + shiftPaaY, paaX, paaY);
+  } else {
+    ctx.fillRect(snakeOsa.x, snakeOsa.y, 10, 10);
+    ctx.strokeRect(snakeOsa.x, snakeOsa.y, 10, 10);
+  }
 }
 
 // Piirretään koko snake.
@@ -141,18 +150,34 @@ function muutaSuuntaa(event) {
   if ((nappain === "ArrowUp" || nappain === "w") && !menossaAlas) {
     dx = 0;
     dy = -10;
+    shiftPaaX = 0;
+    shiftPaaY = 5;
+    paaX = 10;
+    paaY = 5;
   }
   if ((nappain === "ArrowDown" || nappain === "s") && !menossaYlos) {
     dx = 0;
     dy = 10;
+    shiftPaaX = 0;
+    shiftPaaY = 0;
+    paaX = 10;
+    paaY = 5;
   }
   if ((nappain === "ArrowLeft" || nappain === "a") && !menossaOikea) {
     dx = -10;
     dy = 0;
+    shiftPaaX = 5;
+    shiftPaaY = 0;
+    paaX = 5;
+    paaY = 10;
   }
   if ((nappain === "ArrowRight" || nappain === "d") && !menossaVasen) {
     dx = 10;
     dy = 0;
+    shiftPaaX = 0;
+    shiftPaaY = 0;
+    paaX = 5;
+    paaY = 10;
   }
 
 }
