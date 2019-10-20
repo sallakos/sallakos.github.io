@@ -13,9 +13,9 @@ let nopeus = 100;
 let shiftPaaX = 0;
 let shiftPaaY = 0;
 let paaX = 5;
-let paaY = 10;
-let ympyraKeskipisteX = shiftPaaX + paaX;
-let ympyraKeskipisteY = shiftPaaY + 5;
+let paaY = 9;
+let ympyraKeskipisteX = 4.5;
+let ympyraKeskipisteY = 4.5;
 let ympyraKulmaAlku = -Math.PI / 2;
 let ympyraKulmaLoppu = Math.PI / 2;
 let viivaAlkuX = 5;
@@ -57,15 +57,21 @@ function main() {
   }
 
   // Muutetaan suuntaa näppäimen painalluksesta. Toimii vasta, kun peli on aloitettu.
-  document.addEventListener("keydown", muutaSuuntaa);
+  document.addEventListener("keydown", function(event) {
+    if (event.key == "v") {
+      nopeus = 100000;
+    } else {
+      muutaSuuntaa(event);
+    }
+  });
 
   // Päivitetään näkymää ajan nopeus välein.
   setTimeout(function() {
     suuntaMuuttumassa = false;
     tyhjennaCanvas();
     liikuta();
-    piirraSnake();
     piirraRuoka();
+    piirraSnake();
     main();
   }, nopeus);
 
@@ -100,7 +106,7 @@ function piirraSnakeOsa(snakeOsa, index) {
     // Piirretään päästä "puolet" suorakulmiona.
     ctx.fillRect(snakeOsa.x + shiftPaaX, snakeOsa.y + shiftPaaY, paaX, paaY);
     // Viedään reunat pään ohi, jotta ympyräosan ja suorakulmio-osan väliin ei jää rakoa.
-    ctx.strokeRect(snakeOsa.x + shiftPaaX, snakeOsa.y + shiftPaaY, 10, 10);
+    //ctx.strokeRect(snakeOsa.x + shiftPaaX, snakeOsa.y + shiftPaaY, 10, 10);
     // Piirretään ympyräosa.
     ctx.beginPath();
     ctx.arc(snakeOsa.x + ympyraKeskipisteX, snakeOsa.y + ympyraKeskipisteY, 4.5, ympyraKulmaAlku, ympyraKulmaLoppu);
@@ -108,8 +114,8 @@ function piirraSnakeOsa(snakeOsa, index) {
   }
   // Piirretään vartalo.
   else {
-    ctx.fillRect(snakeOsa.x, snakeOsa.y, 10, 10);
-    ctx.strokeRect(snakeOsa.x, snakeOsa.y, 10, 10);
+    ctx.fillRect(snakeOsa.x, snakeOsa.y, 9, 9);
+    //ctx.strokeRect(snakeOsa.x + 0.5, snakeOsa.y + 0.5, 10, 10);
   }
 }
 
@@ -140,7 +146,7 @@ function liikuta() {
       nopeus -= 10;
     }
     $("#score").text(score);
-    $("#nopeus").text(nopeus);
+    $("#nopeus").text(150 - nopeus);
     luoRuoka();
   } else {
     snake.pop();
@@ -171,11 +177,9 @@ function muutaSuuntaa(event) {
     dx = 0;
     dy = -10;
     shiftPaaX = 0;
-    shiftPaaY = 5;
-    paaX = 10;
+    shiftPaaY = 4;
+    paaX = 9;
     paaY = 5;
-    ympyraKeskipisteX = 5;
-    ympyraKeskipisteY = 6;
     ympyraKulmaAlku = Math.PI;
     ympyraKulmaLoppu = 0;
   }
@@ -184,22 +188,18 @@ function muutaSuuntaa(event) {
     dy = 10;
     shiftPaaX = 0;
     shiftPaaY = 0;
-    paaX = 10;
+    paaX = 9;
     paaY = 5;
-    ympyraKeskipisteX = 5;
-    ympyraKeskipisteY = 5;
     ympyraKulmaAlku = 0;
     ympyraKulmaLoppu = -Math.PI;
   }
   if ((nappain === "ArrowLeft" || nappain === "a") && !menossaOikea) {
     dx = -10;
     dy = 0;
-    shiftPaaX = 5;
+    shiftPaaX = 4;
     shiftPaaY = 0;
     paaX = 5;
-    paaY = 10;
-    ympyraKeskipisteX = 6;
-    ympyraKeskipisteY = 5;
+    paaY = 9;
     ympyraKulmaAlku = Math.PI / 2;
     ympyraKulmaLoppu = 3 * Math.PI / 2;
   }
@@ -209,9 +209,7 @@ function muutaSuuntaa(event) {
     shiftPaaX = 0;
     shiftPaaY = 0;
     paaX = 5;
-    paaY = 10;
-    ympyraKeskipisteX = 5;
-    ympyraKeskipisteY = 5;
+    paaY = 9;
     ympyraKulmaAlku = -Math.PI / 2;
     ympyraKulmaLoppu = Math.PI / 2;
   }
@@ -258,9 +256,12 @@ function luoRuoka() {
 // Piirretään ruoka.
 function piirraRuoka() {
   ctx.fillStyle = "white";
-  ctx.strokeStyle = CANVAS_VARI;
-  ctx.fillRect(ruokaX, ruokaY, 10, 10);
-  ctx.strokeRect(ruokaX, ruokaY, 10, 10);
+  // ctx.strokeStyle = CANVAS_VARI;
+  // ctx.fillRect(ruokaX, ruokaY, 10, 10);
+  // ctx.strokeRect(ruokaX, ruokaY, 10, 10);
+  ctx.beginPath();
+  ctx.arc(ruokaX + ympyraKeskipisteX, ruokaY + ympyraKeskipisteY, 4.5, 0, 2 * Math.PI);
+  ctx.fill();
 }
 
 // Tyhjennetään ruutu, jotta voidaan piirtää uusi snake.
