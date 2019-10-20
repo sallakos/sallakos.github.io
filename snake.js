@@ -10,6 +10,7 @@ let ruokaY = 0;
 let suuntaMuuttumassa = false;
 let score = 0;
 let nopeus = 100;
+let nopeusTalletus = 100;
 let shiftPaaX = 0;
 let shiftPaaY = 0;
 let paaX = 5;
@@ -22,6 +23,8 @@ let viivaAlkuX = 5;
 let viivaAlkuY = 0;
 let viivaLoppuX = 5;
 let viivaLoppuY = 10;
+let viimeinenOsa = {x: 0, y: 0};
+let kaynnissa = false;
 
 const gameCanvas = document.getElementById("gameCanvas");
 const ctx = gameCanvas.getContext("2d"); // Piirretään 2D -canvas.
@@ -45,33 +48,52 @@ let snake = muodostaSnake();
 piirraSnake();
 luoRuoka();
 
-// Kun klikataan pelialuetta, aloitetaan peli.
-$("#gameCanvas").click(main);
+// Peli alkaa välilyönnillä. Pelin voi pysäyttäää välilyönnillä ja jatkaa taas.
+document.addEventListener("keydown", function(event) {
+  if (event.key == " " && !kaynnissa) {
+    kaynnissa = true;
+    main();
+  }
+  else if (event.key == " " && kaynnissa) {
+    clearTimeout(omaTimeout);
+    kaynnissa = false;
+  }
+});
 
 // Pääohjelma. Liikutetaan matoa ajan nopeus välein.
 function main() {
 
-  // Jos snake osuu seinään tai itseensä, lopetetaan peli.
-  if (peliLoppu()) {
-    return;
-  }
-
   // Muutetaan suuntaa näppäimen painalluksesta. Toimii vasta, kun peli on aloitettu.
   document.addEventListener("keydown", function(event) {
-    if (event.key == "v") {
-      nopeus = 100000;
-    } else {
       muutaSuuntaa(event);
-    }
   });
 
   // Päivitetään näkymää ajan nopeus välein.
-  setTimeout(function() {
+  omaTimeout = setTimeout(function() {
+
+    // Tallennetaan tieto siitä, että suunta ei ole muuttumassa.
     suuntaMuuttumassa = false;
+
+    // Tyhjennetään canvas, liikutetaan käärmettä ja piirretään ruoka.
     tyhjennaCanvas();
     liikuta();
     piirraRuoka();
-    piirraSnake();
+
+    // Jos peli ei päättynyt, piirretään käärme.
+    if (!peliLoppu()) {
+      piirraSnake();
+    }
+
+    // Jos peli päättyy, poistetaan piiloon mennyt pää, piirretään snake
+    // ja piirretään aiempi viimeinen osa. Poistutaan ohjelmasta.
+    else {
+      palaa();
+      piirraSnake();
+      piirraSnakeOsa(viimeinenOsa);
+      return;
+    }
+
+    // Jatketaan ohjelman suorittamista.
     main();
   }, nopeus);
 
@@ -149,9 +171,19 @@ function liikuta() {
     $("#nopeus").text(150 - nopeus);
     luoRuoka();
   } else {
+    viimeinenOsa = {
+      x: snake[snake.length - 1].x,
+      y: snake[snake.length - 1].y
+    };
     snake.pop();
   }
 
+}
+
+// Jos peli päättyy, pysäytetään käärme.
+function palaa() {
+  // Poistetaan piiloon mennyt pää.
+  snake.shift();
 }
 
 // Vaihdetaan snaken kulkusuunta.
