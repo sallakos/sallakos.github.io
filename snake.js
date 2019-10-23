@@ -57,11 +57,15 @@ luoRuoka();
 document.addEventListener("keydown", function(event) {
   if (event.key == " " && !kaynnissa) {
     kaynnissa = true;
+    piirraSnake();
+    piirraRuoka();
     main();
   } else if (event.key == " " && kaynnissa) {
     clearTimeout(omaTimeout);
     kaynnissa = false;
     pause = true;
+    tyhjennaCanvas();
+    piirraPause();
   } else if (event.key == "r" && !kaynnissa && !pause) {
     location.reload();
   }
@@ -313,4 +317,10 @@ function tyhjennaCanvas() {
   ctx.strokeStyle = CANVAS_VARI; // Reunaväri.
   ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height); // Täytetään pelialue.
   ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height); // Pelialueen reunat.
+}
+
+function piirraPause() {
+  ctx.fillStyle = "white";
+  ctx.font = "30px Arial";
+  ctx.fillText("PAUSED", 50, 50);
 }
