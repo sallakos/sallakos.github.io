@@ -23,8 +23,12 @@ let viivaAlkuX = 5;
 let viivaAlkuY = 0;
 let viivaLoppuX = 5;
 let viivaLoppuY = 10;
-let viimeinenOsa = {x: 0, y: 0};
+let viimeinenOsa = {
+  x: 0,
+  y: 0
+};
 let kaynnissa = false;
+let pause = false;
 
 const gameCanvas = document.getElementById("gameCanvas");
 const ctx = gameCanvas.getContext("2d"); // Piirretään 2D -canvas.
@@ -49,14 +53,17 @@ piirraSnake();
 luoRuoka();
 
 // Peli alkaa välilyönnillä. Pelin voi pysäyttäää välilyönnillä ja jatkaa taas.
+// R:llä päivitetään sivu jotta voidaan aloittaa uudellen.
 document.addEventListener("keydown", function(event) {
   if (event.key == " " && !kaynnissa) {
     kaynnissa = true;
     main();
-  }
-  else if (event.key == " " && kaynnissa) {
+  } else if (event.key == " " && kaynnissa) {
     clearTimeout(omaTimeout);
     kaynnissa = false;
+    pause = true;
+  } else if (event.key == "r" && !kaynnissa && !pause) {
+    location.reload();
   }
 });
 
@@ -65,7 +72,7 @@ function main() {
 
   // Muutetaan suuntaa näppäimen painalluksesta. Toimii vasta, kun peli on aloitettu.
   document.addEventListener("keydown", function(event) {
-      muutaSuuntaa(event);
+    muutaSuuntaa(event);
   });
 
   // Päivitetään näkymää ajan nopeus välein.
@@ -262,11 +269,15 @@ function peliLoppu() {
   for (var i = 4; i < snake.length; i++) {
     const osumaOma = (snake[0].x === snake[i].x && snake[0].y === snake[i].y);
     if (osumaOma) {
+      kaynnissa = false;
+      pause = false;
       return true;
     }
   }
 
   if (osumaVasen || osumaOikea || osumaYla || osumaAla) {
+    kaynnissa = false;
+    pause = false;
     return true;
   }
 
