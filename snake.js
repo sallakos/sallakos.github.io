@@ -322,5 +322,6 @@ function tyhjennaCanvas() {
 function piirraPause() {
   ctx.fillStyle = "white";
   ctx.font = "30px Arial";
-  ctx.fillText("PAUSED", 50, 50);
+  ctx.textBaseline = "bottom";
+  ctx.fillText("\u258c\u258c", 15, gameCanvas.height - 15);
 }
