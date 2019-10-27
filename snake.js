@@ -1,34 +1,40 @@
-// Peruspeli toimii.
 //jshint esversion:6
+
+// Alkutietoja.
 const CANVAS_VARI = "black";
 const SNAKE_VARI = "pink";
 const ALKU_PITUUS = 5;
+
+// Aluksi snake liikkuu oikealle. Suunta ei ole muuttumassa.
 let dx = 10;
 let dy = 0;
+let suuntaMuuttumassa = false;
+
+// Aluksi ruoan sijainti on nolla.
 let ruokaX = 0;
 let ruokaY = 0;
-let suuntaMuuttumassa = false;
+
+// Pisteet on nolla ja nopeus 100.
 let score = 0;
 let nopeus = 100;
-let nopeusTalletus = 100;
+
+// Tietoja piirtämistä varten.
 let shiftPaaX = 0;
 let shiftPaaY = 0;
 let paaX = 5;
 let paaY = 9;
-let ympyraKeskipisteX = 4.5;
-let ympyraKeskipisteY = 4.5;
+const ympyraKeskipisteX = 4.5;
+const ympyraKeskipisteY = 4.5;
 let ympyraKulmaAlku = -Math.PI / 2;
 let ympyraKulmaLoppu = Math.PI / 2;
-let viivaAlkuX = 5;
-let viivaAlkuY = 0;
-let viivaLoppuX = 5;
-let viivaLoppuY = 10;
 let viimeinenOsa = {
   x: 0,
   y: 0
 };
+
+// Aluksi peli ei ole käynnissä eikä ohi.
 let kaynnissa = false;
-let pause = false;
+let peliOhi = false;
 
 const gameCanvas = document.getElementById("gameCanvas");
 const ctx = gameCanvas.getContext("2d"); // Piirretään 2D -canvas.
@@ -55,18 +61,17 @@ luoRuoka();
 // Peli alkaa välilyönnillä. Pelin voi pysäyttäää välilyönnillä ja jatkaa taas.
 // R:llä päivitetään sivu jotta voidaan aloittaa uudellen.
 document.addEventListener("keydown", function(event) {
-  if (event.key == " " && !kaynnissa) {
+  if (event.key === " " && !kaynnissa && !peliOhi) {
     kaynnissa = true;
     piirraSnake();
     piirraRuoka();
     main();
-  } else if (event.key == " " && kaynnissa) {
+  } else if (event.key === " " && kaynnissa) {
     clearTimeout(omaTimeout);
     kaynnissa = false;
-    pause = true;
     tyhjennaCanvas();
     piirraPause();
-  } else if (event.key == "r" && !kaynnissa && !pause) {
+  } else if (event.key === "r" && peliOhi) {
     location.reload();
   }
 });
@@ -90,8 +95,11 @@ function main() {
     liikuta();
     piirraRuoka();
 
+    // Tarkistetaan, onko osuttu johonkin.
+    tarkistaPeliLoppu();
+
     // Jos peli ei päättynyt, piirretään käärme.
-    if (!peliLoppu()) {
+    if (!peliOhi) {
       piirraSnake();
     }
 
@@ -138,8 +146,6 @@ function piirraSnakeOsa(snakeOsa, index) {
   if (index == 0) {
     // Piirretään päästä "puolet" suorakulmiona.
     ctx.fillRect(snakeOsa.x + shiftPaaX, snakeOsa.y + shiftPaaY, paaX, paaY);
-    // Viedään reunat pään ohi, jotta ympyräosan ja suorakulmio-osan väliin ei jää rakoa.
-    //ctx.strokeRect(snakeOsa.x + shiftPaaX, snakeOsa.y + shiftPaaY, 10, 10);
     // Piirretään ympyräosa.
     ctx.beginPath();
     ctx.arc(snakeOsa.x + ympyraKeskipisteX, snakeOsa.y + ympyraKeskipisteY, 4.5, ympyraKulmaAlku, ympyraKulmaLoppu);
@@ -148,7 +154,6 @@ function piirraSnakeOsa(snakeOsa, index) {
   // Piirretään vartalo.
   else {
     ctx.fillRect(snakeOsa.x, snakeOsa.y, 9, 9);
-    //ctx.strokeRect(snakeOsa.x + 0.5, snakeOsa.y + 0.5, 10, 10);
   }
 }
 
@@ -260,7 +265,7 @@ function muutaSuuntaa(event) {
 }
 
 // Jos snake osuu seinään tai itseensä, peli päättyy.
-function peliLoppu() {
+function tarkistaPeliLoppu() {
 
   // Pää osuu seinään.
   const osumaVasen = snake[0].x < 0;
@@ -274,18 +279,14 @@ function peliLoppu() {
     const osumaOma = (snake[0].x === snake[i].x && snake[0].y === snake[i].y);
     if (osumaOma) {
       kaynnissa = false;
-      pause = false;
-      return true;
+      peliOhi = true;
     }
   }
 
   if (osumaVasen || osumaOikea || osumaYla || osumaAla) {
     kaynnissa = false;
-    pause = false;
-    return true;
+    peliOhi = true;
   }
-
-  return false;
 
 }
 
