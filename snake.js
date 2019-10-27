@@ -19,12 +19,12 @@ let score = 0;
 let nopeus = 100;
 
 // Tietoja piirtämistä varten.
+const ympyraKeskipisteX = 4.5;
+const ympyraKeskipisteY = 4.5;
 let shiftPaaX = 0;
 let shiftPaaY = 0;
 let paaX = 5;
 let paaY = 9;
-const ympyraKeskipisteX = 4.5;
-const ympyraKeskipisteY = 4.5;
 let ympyraKulmaAlku = -Math.PI / 2;
 let ympyraKulmaLoppu = Math.PI / 2;
 let viimeinenOsa = {
@@ -72,7 +72,8 @@ document.addEventListener("keydown", function(event) {
     tyhjennaCanvas();
     piirraPause();
   } else if (event.key === "r" && peliOhi) {
-    location.reload();
+    // location.reload();
+    alustaPeli();
   }
 });
 
@@ -304,9 +305,6 @@ function luoRuoka() {
 // Piirretään ruoka.
 function piirraRuoka() {
   ctx.fillStyle = "white";
-  // ctx.strokeStyle = CANVAS_VARI;
-  // ctx.fillRect(ruokaX, ruokaY, 10, 10);
-  // ctx.strokeRect(ruokaX, ruokaY, 10, 10);
   ctx.beginPath();
   ctx.arc(ruokaX + ympyraKeskipisteX, ruokaY + ympyraKeskipisteY, 4.5, 0, 2 * Math.PI);
   ctx.fill();
@@ -325,4 +323,30 @@ function piirraPause() {
   ctx.font = "30px Arial";
   ctx.textBaseline = "bottom";
   ctx.fillText("\u258c\u258c", 15, gameCanvas.height - 15);
+}
+
+function alustaPeli() {
+  dx = 10;
+  dy = 0;
+  suuntaMuuttumassa = false;
+  ruokaX = 0;
+  ruokaY = 0;
+  score = 0;
+  nopeus = 100;
+  shiftPaaX = 0;
+  shiftPaaY = 0;
+  paaX = 5;
+  paaY = 9;
+  ympyraKulmaAlku = -Math.PI / 2;
+  ympyraKulmaLoppu = Math.PI / 2;
+  viimeinenOsa = {
+    x: 0,
+    y: 0
+  };
+  kaynnissa = false;
+  peliOhi = false;
+  snake = muodostaSnake();
+  tyhjennaCanvas();
+  piirraSnake();
+  luoRuoka();
 }
