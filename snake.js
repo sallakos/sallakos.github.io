@@ -2,7 +2,7 @@
 
 // Alkutietoja.
 const CANVAS_VARI = "black";
-const SNAKE_VARI = "pink";
+const SNAKE_VARI = "aqua";
 const ALKU_PITUUS = 5;
 
 // Aluksi snake liikkuu oikealle. Suunta ei ole muuttumassa.
@@ -57,6 +57,7 @@ let snake = muodostaSnake();
 // Piirretään snake valmiiksi. Luodaan ruoka myös.
 piirraSnake();
 luoRuoka();
+// piirraAlku();
 
 // Peli alkaa välilyönnillä. Pelin voi pysäyttäää välilyönnillä ja jatkaa taas.
 // R:llä päivitetään sivu jotta voidaan aloittaa uudellen.
@@ -110,6 +111,7 @@ function main() {
       palaa();
       piirraSnake();
       piirraSnakeOsa(viimeinenOsa);
+      piirraGameOver();
       return;
     }
 
@@ -318,11 +320,30 @@ function tyhjennaCanvas() {
   ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height); // Pelialueen reunat.
 }
 
+function piirraAlku() {
+  ctx.fillStyle = "white";
+  ctx.font = "15px Arial";
+  ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "center";
+  ctx.fillText("Press SPACE to start and pause.", gameCanvas.width / 2, gameCanvas.height / 2);
+}
+
 function piirraPause() {
   ctx.fillStyle = "white";
   ctx.font = "30px Arial";
   ctx.textBaseline = "bottom";
+  ctx.textAlign = "start";
   ctx.fillText("\u258c\u258c", 15, gameCanvas.height - 15);
+}
+
+function piirraGameOver() {
+  ctx.fillStyle = "red";
+  ctx.font = "30px Arial";
+  ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "center";
+  ctx.fillText("GAME OVER", gameCanvas.width / 2, gameCanvas.height / 2);
+  ctx.font = "15px Arial";
+  ctx.fillText("Press R to restart.", gameCanvas.width / 2, gameCanvas.height / 2 + 30);
 }
 
 function alustaPeli() {
