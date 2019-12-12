@@ -370,4 +370,6 @@ function alustaPeli() {
   tyhjennaCanvas();
   piirraSnake();
   luoRuoka();
+  $("#score").text(score);
+  $("#nopeus").text(150 - nopeus);
 }
